@@ -1,0 +1,26 @@
+# Logs
+logs
+*.log
+
+# Dependency directories
+node_modules/
+dist/
+
+# Environment files
+.env
+
+# Build output
+build/
+dist/
+
+# Testing files
+coverage/
+
+# IDE-specific files and directories
+.vscode/
+.idea/
+*.iml
+
+# Miscellaneous
+*.swp
+.DS_Store
