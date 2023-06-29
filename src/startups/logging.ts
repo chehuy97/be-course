@@ -1,4 +1,4 @@
-import { logger } from '../helpers/logger';
+import { logger } from '../helpers/loggerHelper';
 
 export const logging = () => {
   process.on('uncaughtException', (err: Error) => {
