@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
-import { SuccessResponse } from '../helpers/responseHelper';
 
 export const demo = (req: Request, res: Response) => {
   res.send('Hello world');
 };
+
+export const register = (req: Request, res: Response) => {};
 
 export const login = (req: Request, res: Response) => {
   console.log('login');

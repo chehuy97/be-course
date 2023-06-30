@@ -3,7 +3,7 @@ import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import compression from 'compression';
 import cors from 'cors';
-import { configs } from '../configs';
+import configs from '../configs';
 import morgan from 'morgan';
 
 export const setup = (app: Express) => {

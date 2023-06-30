@@ -1,7 +1,9 @@
 import { cors } from './cors';
-import { jwt } from './jwt'
+import { jwt } from './jwt';
+import { dbConfigs } from './db';
 
-export const configs = {
+export default {
+  dbConfigs,
   cors,
-  jwtConfigs: jwt
+  jwtConfigs: jwt,
 };
