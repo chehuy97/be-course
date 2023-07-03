@@ -7,7 +7,7 @@ const app: Express = express();
 dotenv.config();
 
 logging();
-database();
+// database();
 setup(app);
 routes(app);
 

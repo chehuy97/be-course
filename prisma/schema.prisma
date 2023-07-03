@@ -1,0 +1,127 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Carts {
+  cart_id   Int     @id(map: "carts_pk")
+  user_id   Int
+  course_id Int
+  Users     Users   @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "carts_fk")
+  Courses   Courses @relation(fields: [course_id], references: [course_id], onDelete: NoAction, onUpdate: NoAction, map: "carts_fk_1")
+}
+
+model Courses {
+  course_id    Int            @id(map: "course_pk") @default(autoincrement())
+  name         String         @db.VarChar(300)
+  user_id      Int
+  amount       Int
+  cover        String         @db.VarChar(100)
+  price        Int
+  tag_id       Int
+  description  String         @db.VarChar(300)
+  video_intro  String         @db.VarChar(100)
+  status       String         @db.VarChar
+  delete_at    DateTime?      @db.Date
+  create_at    DateTime       @db.Date
+  Carts        Carts[]
+  Lessons      Lessons[]
+  TagCourses   TagCourses[]
+  Topics       Topics[]
+  Transactions Transactions[]
+}
+
+model Lessons {
+  lesson_id   Int      @id(map: "lessons_pk")
+  topic_id    Int?
+  course_id   Int?
+  lesson_name String   @db.VarChar(255)
+  lesson_url  String   @db.VarChar(255)
+  description String   @db.VarChar(255)
+  Courses     Courses? @relation(fields: [course_id], references: [course_id], onDelete: NoAction, onUpdate: NoAction, map: "lessons_fk")
+  Topics      Topics?  @relation(fields: [topic_id], references: [topic_id], onDelete: NoAction, onUpdate: NoAction, map: "lessons_fk_1")
+}
+
+model Roles {
+  role_id   Int         @id @default(autoincrement())
+  role_name String      @db.VarChar
+  userRoles UserRoles[] 
+}
+
+model TagCourses {
+  tag_id        Int
+  course_id     Int
+  tag_course_id Int     @id(map: "tagcourses_pk")
+  Tags          Tags    @relation(fields: [tag_id], references: [tag_id], onDelete: NoAction, onUpdate: NoAction, map: "tagcourses_fk")
+  Courses       Courses @relation(fields: [course_id], references: [course_id], onDelete: NoAction, onUpdate: NoAction, map: "tagcourses_fk_1")
+}
+
+model Tags {
+  tag_id     Int          @id(map: "tags_pkey")
+  tag_name   String       @db.VarChar(255)
+  TagCourses TagCourses[]
+}
+
+model Topics {
+  topic_id    Int       @id(map: "topics_pk")
+  course_id   Int
+  topic_name  String    @db.VarChar(255)
+  topic_url   String    @db.VarChar(255)
+  amount      Int
+  description String    @db.VarChar(255)
+  Lessons     Lessons[]
+  Courses     Courses   @relation(fields: [course_id], references: [course_id], onDelete: NoAction, onUpdate: NoAction, map: "topics_fk")
+}
+
+model Transactions {
+  trans_id   Int      @id(map: "transactions_pk")
+  user_id    Int
+  course_id  Int
+  created_at DateTime @db.Date
+  Users      Users    @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "transactions_fk")
+  Courses    Courses  @relation(fields: [course_id], references: [course_id], onDelete: NoAction, onUpdate: NoAction, map: "transactions_fk_1")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model UserRoles {
+  user_id Int
+  role_id Int
+  users   Users @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "userroles_fk")
+  roles   Roles @relation(fields: [role_id], references: [role_id], onDelete: NoAction, onUpdate: NoAction, map: "userroles_fk_1")
+
+  @@id([user_id, role_id])
+
+  @@index([user_id], map: "fki_s")
+  @@index([user_id], map: "fki_user_fk")
+  @@index([user_id], map: "fki_user_id")
+  @@index([user_id], map: "user_fk")
+}
+
+model Users {
+  user_id      Int            @id(map: "users_pk") @default(autoincrement())
+  email        String         @db.VarChar(100)
+  fullname     String         @db.VarChar(100)
+  age          Int?           @default(15)
+  gender       Gender?
+  dateOfBirth  DateTime?      @db.Date
+  avatar       String         @db.VarChar(100)
+  phone        String?        @db.VarChar
+  Carts        Carts[]
+  Transactions Transactions[]
+  userRoles    UserRoles[]   
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum Role {
+  TEACHER
+  STUDENT
+  ADMIN
+}

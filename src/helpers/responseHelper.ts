@@ -16,14 +16,14 @@ const response = (
 };
 
 export const SuccessResponse = (res: Response, data: any, statusCode = 200) => {
-  res.status(statusCode).json(response(statusCode, null, null, statusCode));
+  res.status(statusCode).json(response(statusCode, null, null, data));
 };
 
 export const BadRequest = (
-  res: Response,
+  res: Response,  
+  data: any,
   serverError = '',
-  errorCode = 1,
-  data = null
+  errorCode = 1
 ) => {
   res
     .status(httpStatus.BAD_REQUEST)
