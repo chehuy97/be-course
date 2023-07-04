@@ -1,5 +1,6 @@
 import jwt, { SignOptions } from 'jsonwebtoken';
 import configs from '../configs';
+import bcrypt from 'bcrypt';
 
 const { publicKey, privateKey, expiresIn } = configs.jwtConfigs;
 
@@ -19,4 +20,12 @@ export const verifyToken = (token: string, options = {}) => {
       }
     });
   });
+};
+
+export const encryptPassword = async (password: string) => {
+  const saltRounds = 10;
+
+  const excryptPassword = await bcrypt.hash(password, saltRounds);
+
+  return excryptPassword;
 };

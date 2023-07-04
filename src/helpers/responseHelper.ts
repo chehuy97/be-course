@@ -16,11 +16,11 @@ const response = (
 };
 
 export const SuccessResponse = (res: Response, data: any, statusCode = 200) => {
-  res.status(statusCode).json(response(statusCode, null, null, data));
+  res.status(200).json(response(statusCode, null, null, data));
 };
 
 export const BadRequest = (
-  res: Response,  
+  res: Response,
   data: any,
   serverError = '',
   errorCode = 1
@@ -43,9 +43,9 @@ export const NoContent = (
 
 export const Unauthorized = (
   res: Response,
+  data: object | null = null,
   serverError = '',
-  errorCode = 1,
-  data = null
+  errorCode = 1
 ) => {
   res
     .status(httpStatus.UNAUTHORIZED)

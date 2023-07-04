@@ -6,15 +6,17 @@ import {
   logout,
   register,
   addRole,
-  getAllRoles
+  getAllRoles,
 } from '../controllers/authController';
+import { validate } from '../helpers/validationHelper';
+import { registerSchema, loginSchema } from '../validations/authValidation';
 
 export const authRouter: Router = express.Router();
 
 authRouter.get('/', demo);
-authRouter.post('/role', addRole)
-authRouter.get('/role', getAllRoles)
-authRouter.get('/register', register);
-authRouter.post('/login', login);
+authRouter.post('/role', addRole);
+authRouter.get('/role', getAllRoles);
+authRouter.post('/register', validate(registerSchema), register);
+authRouter.post('/login', validate(loginSchema), login);
 authRouter.post('/token', generateNewToken);
 authRouter.post('/logout', logout);
