@@ -1,14 +1,14 @@
 import jwt, { SignOptions } from 'jsonwebtoken'
 import configs from '../configs'
-import bcrypt from 'bcrypt'
 import constants from '../common/constants'
+import { Request } from 'express'
 
 const { publicKey, privateKey } = configs.jwtConfigs
 
 export const generateToken = (data: any, option = {}): String => {
   const options: SignOptions = { ...option, algorithm: "RS256" }
   let token = jwt.sign(data, privateKey, options)
-  return token
+  return `Bearer ${token}`
 }
 
 export const verifyToken = (token: string) => {
@@ -23,10 +23,3 @@ export const verifyToken = (token: string) => {
   })
 }
 
-export const encryptPassword = async (password: string) => {
-  const saltRounds = 10
-
-  const excryptPassword = await bcrypt.hash(password, saltRounds)
-
-  return excryptPassword
-}

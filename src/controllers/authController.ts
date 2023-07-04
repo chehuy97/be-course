@@ -1,11 +1,11 @@
 import { PrismaClient } from '@prisma/client'
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { BadRequest, SuccessResponse } from '../helpers'
 import {
-  encryptPassword,
   generateToken,
   verifyToken,
-} from '../helpers/authHelper'
+} from '../helpers/jwtHelper'
+import { encryptPassword } from '../helpers/encryptHelper'
 import constants from '../common/constants'
 import bcrypt from 'bcrypt'
 import { IUser } from '../models/IUser'
@@ -19,7 +19,7 @@ export const demo = (req: Request, res: Response) => {
 export const addRole = async (
   req: Request,
   res: Response,
-  next: (err: any) => void
+  next: NextFunction
 ) => {
   try {
     const { roleName } = req.body
@@ -43,7 +43,7 @@ export const addRole = async (
 export const getAllRoles = async (
   req: Request,
   res: Response,
-  next: (err: any) => void
+  next: NextFunction
 ) => {
   try {
     const roles = await prisma.roles.findMany()
@@ -56,7 +56,7 @@ export const getAllRoles = async (
 export const register = async (
   req: Request,
   res: Response,
-  next: (err: any) => void
+  next: NextFunction
 ) => {
   try {
     let {
@@ -126,7 +126,7 @@ export const register = async (
 export const login = async (
   req: Request,
   res: Response,
-  next: (err: any) => void
+  next: NextFunction
 ) => {
   try {
     const { email, password } = req.body
@@ -157,11 +157,18 @@ export const login = async (
 export const generateNewToken = async (
   req: Request,
   res: Response,
-  next: (err: any) => void
+  next: NextFunction
 ) => {
   try {
     const { refresh_token } = req.body
-    const decoded = (await verifyToken(refresh_token)) as IUser
+
+    const [prefixToken, token] = (refresh_token as string).split(" ")
+
+    if(prefixToken.toLowerCase() != "bearer") {
+      throw Error(constants.ERROR.INVALID_TOKEN_FORMAT)
+    }
+
+    const decoded = await verifyToken(token) as IUser
     const user = await prisma.users.findFirst({
       where: {
         email: decoded.email,
@@ -188,7 +195,7 @@ export const generateNewToken = async (
 export const forgotPassword = (
   req: Request,
   res: Response,
-  next: (err: any) => void
+  next: NextFunction
 ) => {
   res.send('Forgot password')
 }
@@ -196,7 +203,7 @@ export const forgotPassword = (
 export const resetPassword = (
   req: Request,
   res: Response,
-  next: (err: any) => void
+  next: NextFunction
 ) => {
   res.send('Reset password')
 }
@@ -204,7 +211,7 @@ export const resetPassword = (
 export const logout = (
   req: Request,
   res: Response,
-  next: (err: any) => void
+  next: NextFunction
 ) => {
   res.send('logout')
 }
