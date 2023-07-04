@@ -1,5 +1,5 @@
-import httpStatus from 'http-status';
-import { Response } from 'express';
+import httpStatus from 'http-status'
+import { Response } from 'express'
 
 const response = (
   httpStatusCode: number,
@@ -12,12 +12,12 @@ const response = (
     errorMessage,
     errorCode,
     data,
-  };
-};
+  }
+}
 
 export const SuccessResponse = (res: Response, data: any, statusCode = 200) => {
-  res.status(200).json(response(statusCode, null, null, data));
-};
+  res.status(200).json(response(statusCode, null, null, data))
+}
 
 export const BadRequest = (
   res: Response,
@@ -27,8 +27,8 @@ export const BadRequest = (
 ) => {
   res
     .status(httpStatus.BAD_REQUEST)
-    .json(response(httpStatus.BAD_REQUEST, serverError, errorCode, data));
-};
+    .json(response(httpStatus.BAD_REQUEST, serverError, errorCode, data))
+}
 
 export const NoContent = (
   res: Response,
@@ -38,8 +38,8 @@ export const NoContent = (
 ) => {
   res
     .status(httpStatus.NO_CONTENT)
-    .json(response(httpStatus.NO_CONTENT, serverError, errorCode, data));
-};
+    .json(response(httpStatus.NO_CONTENT, serverError, errorCode, data))
+}
 
 export const Unauthorized = (
   res: Response,
@@ -49,8 +49,8 @@ export const Unauthorized = (
 ) => {
   res
     .status(httpStatus.UNAUTHORIZED)
-    .json(response(httpStatus.UNAUTHORIZED, serverError, errorCode, data));
-};
+    .json(response(httpStatus.UNAUTHORIZED, serverError, errorCode, data))
+}
 
 export const Forbidden = (
   res: Response,
@@ -60,8 +60,8 @@ export const Forbidden = (
 ) => {
   res
     .status(httpStatus.FORBIDDEN)
-    .json(response(httpStatus.FORBIDDEN, serverError, errorCode, data));
-};
+    .json(response(httpStatus.FORBIDDEN, serverError, errorCode, data))
+}
 
 export const NotFound = (
   res: Response,
@@ -71,8 +71,8 @@ export const NotFound = (
 ) => {
   res
     .status(httpStatus.NOT_FOUND)
-    .json(response(httpStatus.NOT_FOUND, serverError, errorCode, data));
-};
+    .json(response(httpStatus.NOT_FOUND, serverError, errorCode, data))
+}
 
 export const MethodNotAllowed = (
   res: Response,
@@ -82,10 +82,8 @@ export const MethodNotAllowed = (
 ) => {
   res
     .status(httpStatus.METHOD_NOT_ALLOWED)
-    .json(
-      response(httpStatus.METHOD_NOT_ALLOWED, serverError, errorCode, data)
-    );
-};
+    .json(response(httpStatus.METHOD_NOT_ALLOWED, serverError, errorCode, data))
+}
 
 export const InternalServerError = (
   res: Response,
@@ -97,8 +95,8 @@ export const InternalServerError = (
     .status(httpStatus.INTERNAL_SERVER_ERROR)
     .json(
       response(httpStatus.INTERNAL_SERVER_ERROR, serverError, errorCode, data)
-    );
-};
+    )
+}
 
 export const Conflict = (
   res: Response,
@@ -108,5 +106,5 @@ export const Conflict = (
 ) => {
   res
     .status(httpStatus.CONFLICT)
-    .json(response(httpStatus.CONFLICT, serverError, errorCode, data));
-};
+    .json(response(httpStatus.CONFLICT, serverError, errorCode, data))
+}

@@ -1,6 +1,6 @@
-import dotenv from 'dotenv';
+import dotenv from 'dotenv'
 
-dotenv.config();
+dotenv.config()
 
 export const dbConfigs = {
   host: process.env.SQL_HOST as string,
@@ -8,4 +8,4 @@ export const dbConfigs = {
   username: process.env.SQL_USERNAME as string,
   password: process.env.SQL_PASSWORD as string,
   name: process.env.SQL_NAME as string,
-};
+}

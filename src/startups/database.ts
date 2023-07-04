@@ -1,7 +1,7 @@
-import { Sequelize } from 'sequelize';
-import configs from '../configs';
+import { Sequelize } from 'sequelize'
+import configs from '../configs'
 
-const { dbConfigs } = configs;
+const { dbConfigs } = configs
 
 // export const database = () => {
 //     const client = new Client({
@@ -32,15 +32,15 @@ export const database = () => {
       host: dbConfigs.host,
       port: dbConfigs.port,
     }
-  );
+  )
 
   sequelize
     .authenticate()
     .then(() => {
-      console.log('DATABASE CONNECTED SUCCESSFULLY!');
+      console.log('DATABASE CONNECTED SUCCESSFULLY!')
     })
     .catch((err) => {
-      console.log('DATABASE CONNECTED FAILURELY!');
-      throw err;
-    });
-};
+      console.log('DATABASE CONNECTED FAILURELY!')
+      throw err
+    })
+}

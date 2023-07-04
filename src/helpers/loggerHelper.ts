@@ -1,6 +1,6 @@
-import { transports, createLogger, format, Logger } from 'winston';
+import { transports, createLogger, format, Logger } from 'winston'
 
-const { combine, timestamp, prettyPrint, json } = format;
+const { combine, timestamp, prettyPrint, json } = format
 
 export const logger: Logger = createLogger({
   level: 'info',
@@ -9,4 +9,4 @@ export const logger: Logger = createLogger({
     new transports.Console(),
     new transports.File({ filename: 'app.log' }),
   ],
-});
+})

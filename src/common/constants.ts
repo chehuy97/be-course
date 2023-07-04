@@ -16,4 +16,4 @@ export default {
     STUDENT_ROLE_NOT_FOUND: 'Student role not found',
     EXISTED_INFO_REGISTER: 'Existed username or email',
   },
-};
+}
