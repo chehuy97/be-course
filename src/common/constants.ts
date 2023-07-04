@@ -11,7 +11,7 @@ export default {
   ERROR: {
     INVALID_TOKEN: 'Token is invalided',
     EXPIRED_TOKEN: 'Token is expired',
-    INVALID_ACCOUNT: 'Your account is wrong username or password',
+    INVALID_ACCOUNT: 'Your account is wrong email or password',
     //REGISTER ERROR
     STUDENT_ROLE_NOT_FOUND: 'Student role not found',
     EXISTED_INFO_REGISTER: 'Existed username or email',

@@ -1,8 +1,9 @@
 import { PrismaClient } from '@prisma/client'
 import { Request, Response } from 'express'
 import { BadRequest, SuccessResponse } from '../helpers'
-import { encryptPassword } from '../helpers/authHelper'
+import { encryptPassword, generateToken } from '../helpers/authHelper'
 import constants from '../common/constants'
+import bcrypt from 'bcrypt'
 
 const prisma = new PrismaClient()
 
@@ -117,9 +118,33 @@ export const register = async (
   }
 }
 
-export const login = (req: Request, res: Response) => {
-  console.log('login')
-  res.send('Hello login')
+export const login = async (
+  req: Request,
+  res: Response,
+  next: (err: any) => void
+) => {
+  try {
+    const { email, password } = req.body
+    const user = await prisma.users.findFirst({
+      where: {
+        email,
+      },
+    })
+    if (!user) {
+      throw Error(constants.ERROR.INVALID_ACCOUNT)
+    }
+    const isMatchPassword = await bcrypt.compare(password, user.password)
+    if(!isMatchPassword) {
+      throw Error(constants.ERROR.INVALID_ACCOUNT)
+    }
+    const access_token = generateToken(user, { expiresIn: constants.JWT.JWT })
+    const refresh_token = generateToken(user, {
+      expiresIn: constants.JWT.JWT_REFRESH,
+    })
+    return SuccessResponse(res, { access_token, refresh_token, user })
+  } catch (err) {
+    next(err)
+  }
 }
 
 export const generateNewToken = (req: Request, res: Response) => {

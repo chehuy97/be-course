@@ -2,10 +2,10 @@ import jwt, { SignOptions } from 'jsonwebtoken'
 import configs from '../configs'
 import bcrypt from 'bcrypt'
 
-const { publicKey, privateKey, expiresIn } = configs.jwtConfigs
+const { publicKey, privateKey } = configs.jwtConfigs
 
 export const generateToken = (data: any, option = {}): String => {
-  const options: SignOptions = { ...option, algorithm: 'HS256', expiresIn }
+  const options: SignOptions = { ...option, algorithm: "RS256" }
   let token = jwt.sign(data, privateKey, options)
   return token
 }
