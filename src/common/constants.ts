@@ -8,14 +8,21 @@ export default {
     EMAIL:
       /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i,
   },
+  ROLE: {
+    ADMIN: 'admin',
+    STUDENT: 'student',
+    TEACHER: 'teacher'
+  },
   ERROR: {
     INVALID_TOKEN_FORMAT: 'Invalid token format',
     INVALID_TOKEN: 'Token is invalided',
     EXPIRED_TOKEN: 'Token is expired',
     INVALID_ACCOUNT: 'Your account is wrong email or password',
     NO_TOKEN: 'No has token',
+    ACCESS_DENIED: "Access denied",
     //REGISTER ERROR
     STUDENT_ROLE_NOT_FOUND: 'Student role not found',
     EXISTED_INFO_REGISTER: 'Existed username or email',
+    
   },
 }

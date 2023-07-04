@@ -2,7 +2,10 @@ import { NextFunction, Request, Response } from "express";
 import constants from "../common/constants";
 import { verifyToken as verifyAccessToken } from '../helpers/jwtHelper';
 import { IUser } from "../models/IUser";
+import { PrismaClient } from "@prisma/client";
+import { Forbidden } from '../helpers/responseHelper'
 
+const prisma = new PrismaClient()
 
 export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -21,6 +24,25 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
 
         next()
 
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const verifyRoleAdmin =  async (req: Request, res: Response, next: NextFunction) => { 
+    try {
+        const user = JSON.parse(req.params.user) as IUser
+        const userRoles = await prisma.userRoles.findMany({
+            where: {
+                user_id: user.user_id
+            },
+            include: {
+                roles: true
+            }
+        })
+        const isAdmin = userRoles.some(item => item.roles.role_name == constants.ROLE.ADMIN)
+        if(!isAdmin) return Forbidden(res, {errorMessage: constants.ERROR.ACCESS_DENIED})
+        next()
     } catch (error) {
         next(error)
     }

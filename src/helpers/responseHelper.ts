@@ -54,9 +54,9 @@ export const Unauthorized = (
 
 export const Forbidden = (
   res: Response,
+  data: object | null = null,
   serverError = '',
   errorCode = 1,
-  data = null
 ) => {
   res
     .status(httpStatus.FORBIDDEN)

@@ -26,6 +26,7 @@ export const editProfile = async (req: Request, res: Response, next: NextFunctio
         where: {user_id: user.user_id},
         data: { ...user}
       })
+      
       return SuccessResponse(res, updatedUser)
     } catch (error) {
       next(error)
