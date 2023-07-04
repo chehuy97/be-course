@@ -1,9 +1,14 @@
 import { PrismaClient } from '@prisma/client'
 import { Request, Response } from 'express'
 import { BadRequest, SuccessResponse } from '../helpers'
-import { encryptPassword, generateToken } from '../helpers/authHelper'
+import {
+  encryptPassword,
+  generateToken,
+  verifyToken,
+} from '../helpers/authHelper'
 import constants from '../common/constants'
 import bcrypt from 'bcrypt'
+import { IUser } from '../models/IUser'
 
 const prisma = new PrismaClient()
 
@@ -134,10 +139,12 @@ export const login = async (
       throw Error(constants.ERROR.INVALID_ACCOUNT)
     }
     const isMatchPassword = await bcrypt.compare(password, user.password)
-    if(!isMatchPassword) {
+    if (!isMatchPassword) {
       throw Error(constants.ERROR.INVALID_ACCOUNT)
     }
-    const access_token = generateToken(user, { expiresIn: constants.JWT.JWT })
+    const access_token = generateToken(user as IUser, {
+      expiresIn: constants.JWT.JWT,
+    })
     const refresh_token = generateToken(user, {
       expiresIn: constants.JWT.JWT_REFRESH,
     })
@@ -147,12 +154,57 @@ export const login = async (
   }
 }
 
-export const generateNewToken = (req: Request, res: Response) => {
-  console.log('generateNewToken')
-  res.send('Hello generateNewToken')
+export const generateNewToken = async (
+  req: Request,
+  res: Response,
+  next: (err: any) => void
+) => {
+  try {
+    const { refresh_token } = req.body
+    const decoded = (await verifyToken(refresh_token)) as IUser
+    const user = await prisma.users.findFirst({
+      where: {
+        email: decoded.email,
+      },
+    })
+    if (!user) {
+      throw Error(constants.ERROR.INVALID_TOKEN)
+    }
+    const access_token = generateToken(user as IUser, {
+      expiresIn: constants.JWT.JWT,
+    })
+    const new_refresh_token = generateToken(user as IUser, {
+      expiresIn: constants.JWT.JWT_REFRESH,
+    })
+    return SuccessResponse(res, {
+      access_token,
+      refresh_token: new_refresh_token,
+    })
+  } catch (err) {
+    next(err)
+  }
 }
 
-export const logout = (req: Request, res: Response) => {
-  console.log('logout')
-  res.send('Hello logout')
+export const forgotPassword = (
+  req: Request,
+  res: Response,
+  next: (err: any) => void
+) => {
+  res.send('Forgot password')
+}
+
+export const resetPassword = (
+  req: Request,
+  res: Response,
+  next: (err: any) => void
+) => {
+  res.send('Reset password')
+}
+
+export const logout = (
+  req: Request,
+  res: Response,
+  next: (err: any) => void
+) => {
+  res.send('logout')
 }

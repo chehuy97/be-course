@@ -1,6 +1,7 @@
 import jwt, { SignOptions } from 'jsonwebtoken'
 import configs from '../configs'
 import bcrypt from 'bcrypt'
+import constants from '../common/constants'
 
 const { publicKey, privateKey } = configs.jwtConfigs
 
@@ -10,11 +11,11 @@ export const generateToken = (data: any, option = {}): String => {
   return token
 }
 
-export const verifyToken = (token: string, options = {}) => {
+export const verifyToken = (token: string) => {
   return new Promise((resolve, reject) => {
     jwt.verify(token, publicKey, (error, decoded) => {
       if (error) {
-        return reject(error)
+        return reject(new Error(constants.ERROR.INVALID_TOKEN))
       } else {
         return resolve(decoded)
       }

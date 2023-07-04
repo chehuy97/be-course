@@ -1,6 +1,6 @@
 export default {
   JWT: {
-    JWT: 60 * 60 * 24,
+    JWT: "2h",
     JWT_REFRESH: '365d',
   },
   REGEX: {
