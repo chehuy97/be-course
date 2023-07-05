@@ -8,5 +8,6 @@ export interface ICourse {
     status: string
     description: string,
     video_intro: string,
-    tags: number[]
+    tags: number[],
+    created_at: string
 }

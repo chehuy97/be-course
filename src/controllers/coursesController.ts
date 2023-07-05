@@ -4,6 +4,7 @@ import { SuccessResponse } from '../helpers/responseHelper'
 import moment, { months } from 'moment'
 import constants from '../common/constants'
 import { IUser } from '../models/IUser'
+import { ICourse } from '../models/ICourse'
 
 const prisma = new PrismaClient()
 
@@ -72,6 +73,24 @@ export const createCourse = async (
     })
 
     return SuccessResponse(res, course)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const updateCourse = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = JSON.parse(req.params.user) as IUser
+    const courseRequest = req.body as ICourse
+    const updatedCourse = await prisma.courses.update({
+      where: {course_id: courseRequest.course_id},
+      data: {...courseRequest, teacher_id: user.user_id}
+    })
+    return SuccessResponse(res, updatedCourse)
   } catch (error) {
     next(error)
   }
