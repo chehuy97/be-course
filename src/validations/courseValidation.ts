@@ -2,7 +2,6 @@ import Joi from "joi";
 
 export const courseSchema = Joi.object({
     name: Joi.string().required(),
-    teacher_id: Joi.number().required(),
     amount: Joi.number().optional(),
     cover: Joi.string().required(),
     price: Joi.number().required(),

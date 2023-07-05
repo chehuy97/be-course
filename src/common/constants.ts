@@ -1,4 +1,7 @@
 export default {
+  DATE: {
+    DATE_TIME: "YYYY-MM-DD HH:mm:ss"
+  },
   JWT: {
     JWT: "2h",
     JWT_REFRESH: '365d',
@@ -23,6 +26,8 @@ export default {
     //REGISTER ERROR
     STUDENT_ROLE_NOT_FOUND: 'Student role not found',
     EXISTED_INFO_REGISTER: 'Existed username or email',
+    //COURSE
+    COURSE_EXISTED: "Cannot create course. Course existed"
     
   },
 }

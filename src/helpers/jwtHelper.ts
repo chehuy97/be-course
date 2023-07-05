@@ -15,7 +15,7 @@ export const verifyToken = (token: string) => {
   return new Promise((resolve, reject) => {
     jwt.verify(token, publicKey, (error, decoded) => {
       if (error) {
-        return reject(new Error(constants.ERROR.INVALID_TOKEN))
+        return reject(new Error(constants.ERROR.EXPIRED_TOKEN))
       } else {
         return resolve(decoded)
       }
