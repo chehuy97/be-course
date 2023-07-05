@@ -6,5 +6,7 @@ export interface IUser {
     dateOfBirth:string,
     avatar:string,
     phone:string,
-    username:string
+    username:string,
+    create_at?: Date,
+    delete_at?: Date
 }

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { ObjectSchema } from 'joi'
-import { BadRequest } from '../helpers'
+import { BadRequest } from '../helpers/responseHelper'
 
 export const validate = (schema: ObjectSchema<any>) => {
   return (req: Request, res: Response, next: NextFunction) => {

@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import { NextFunction, Request, Response } from 'express'
-import { BadRequest, SuccessResponse } from '../helpers'
+import { BadRequest, SuccessResponse } from '../helpers/responseHelper'
 import {
   generateToken,
   verifyToken,

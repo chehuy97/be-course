@@ -1,10 +1,11 @@
 import express, { Router } from 'express'
-import { getProfile, editProfile } from '../controllers/accountController'
 import {
   updateRoleTeacher,
   getAllTeacher,
   getAllStudent,
-} from '../controllers/adminController'
+  getProfile,
+  editProfile,
+} from '../controllers/accountController'
 import { verifyRoleAdmin, verifyToken } from '../middlewares/authMiddleware'
 
 export const accountRouter: Router = express.Router()

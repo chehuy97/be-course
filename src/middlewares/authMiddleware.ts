@@ -47,3 +47,22 @@ export const verifyRoleAdmin =  async (req: Request, res: Response, next: NextFu
         next(error)
     }
 }
+
+export const verifyRoleTeacher =  async (req: Request, res: Response, next: NextFunction) => { 
+    try {
+        const user = JSON.parse(req.params.user) as IUser
+        const userRoles = await prisma.userRoles.findMany({
+            where: {
+                user_id: user.user_id
+            },
+            include: {
+                roles: true
+            }
+        })
+        const isAdmin = userRoles.some(item => item.roles.role_name == constants.ROLE.TEACHER)
+        if(!isAdmin) return Forbidden(res, {errorMessage: constants.ERROR.ACCESS_DENIED})
+        next()
+    } catch (error) {
+        next(error)
+    }
+}
