@@ -1,0 +1,31 @@
+version: "3.7"
+x-common-variables:
+  &common-variables
+  POSTGRES_DB: course-demo
+  POSTGRES_USER: chehuy97
+  POSTGRES_PASSWORD: huy123456
+  POSTGRES_PORT: 5432
+  DATABASE_URL: postgres://chehuy97@db:5432/course-demo
+  HOST: 4000
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 4000:4000
+    environment:
+       <<: *common-variables
+    depends_on:
+      - db
+
+  db:
+    image: postgres:latest
+    restart: always
+    ports:
+      - 5432:5432  
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
