@@ -1,11 +1,11 @@
 version: "3.7"
 x-common-variables:
   &common-variables
-  POSTGRES_DB: course-demo
+  POSTGRES_DB: course-be
   POSTGRES_USER: chehuy97
   POSTGRES_PASSWORD: huy123456
   POSTGRES_PORT: 5432
-  DATABASE_URL: postgres://chehuy97@db:5432/course-demo
+  DATABASE_URL: postgres://chehuy97:huy123456@db:5432/course-be?schema=public
   HOST: 4000
 services:
   app:
@@ -20,10 +20,13 @@ services:
       - db
 
   db:
-    image: postgres:latest
+    image: postgres
+    container_name: postgres_db_container
     restart: always
+    environment:
+      <<: *common-variables
     ports:
-      - 5432:5432  
+      - 5432:5432
     volumes:
       - pgdata:/var/lib/postgresql/data
 
