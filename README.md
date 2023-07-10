@@ -11,7 +11,7 @@ docker-compose up
 ```
 Step 2
 ```bash
-npx prisma generate
+touch .env & cp .env.example .env
 ```
 Step 3
 ```bash

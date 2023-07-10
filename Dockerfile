@@ -8,6 +8,10 @@
 
  RUN yarn
 
+ RUN touch .env & cp .env.example .env
+
+ RUN npx prisma generate
+
  EXPOSE 4000
 
  CMD [ "yarn", "dev" ]
