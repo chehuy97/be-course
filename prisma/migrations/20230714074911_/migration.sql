@@ -101,12 +101,13 @@ CREATE TABLE "Users" (
     "user_id" SERIAL NOT NULL,
     "email" VARCHAR(100) NOT NULL,
     "fullname" VARCHAR(100) NOT NULL,
-    "gender" VARCHAR(10) NOT NULL,
-    "dateOfBirth" VARCHAR NOT NULL,
-    "avatar" VARCHAR(100) NOT NULL,
-    "phone" VARCHAR NOT NULL,
+    "gender" VARCHAR(10),
+    "dateOfBirth" VARCHAR,
+    "avatar" VARCHAR(100),
+    "phone" VARCHAR,
     "username" VARCHAR NOT NULL,
-    "password" VARCHAR NOT NULL,
+    "password" VARCHAR,
+    "type" VARCHAR NOT NULL DEFAULT 'normal',
 
     CONSTRAINT "users_pk" PRIMARY KEY ("user_id")
 );

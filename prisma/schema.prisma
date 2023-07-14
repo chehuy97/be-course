@@ -105,12 +105,13 @@ model Users {
   user_id      Int            @id(map: "users_pk") @default(autoincrement())
   email        String         @db.VarChar(100)
   fullname     String         @db.VarChar(100)
-  gender       String         @db.VarChar(10)
-  dateOfBirth  String       @db.VarChar
-  avatar       String         @db.VarChar(100)
-  phone        String         @db.VarChar
+  gender       String?         @db.VarChar(10)
+  dateOfBirth  String?       @db.VarChar
+  avatar       String?         @db.VarChar(100)
+  phone        String?         @db.VarChar
   username        String         @db.VarChar
-  password        String         @db.VarChar
+  password        String?         @db.VarChar
+  type            String          @db.VarChar @default("normal")
   carts        Carts[]
   transactions Transactions[]
   userRoles    UserRoles[]

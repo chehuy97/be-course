@@ -15,7 +15,7 @@ touch .env & cp .env.example .env
 ```
 Step 3
 ```bash
-npm prisma migrate dev
+npx prisma migrate dev
 ```
 
 ## Usage

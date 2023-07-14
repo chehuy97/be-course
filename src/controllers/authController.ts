@@ -1,14 +1,12 @@
 import { PrismaClient } from '@prisma/client'
 import { NextFunction, Request, Response } from 'express'
 import { BadRequest, SuccessResponse } from '../helpers/responseHelper'
-import {
-  generateToken,
-  verifyToken,
-} from '../helpers/jwtHelper'
+import { generateToken, verifyToken } from '../helpers/jwtHelper'
 import { encryptPassword } from '../helpers/encryptHelper'
 import constants from '../common/constants'
 import bcrypt from 'bcrypt'
 import { IUser } from '../models/IUser'
+import { generateGGAuthURL, verifyGoogle } from '../helpers/googleHelper'
 
 const prisma = new PrismaClient()
 
@@ -135,10 +133,10 @@ export const login = async (
         email,
       },
     })
-    if (!user) {
+    if (!user || user.type != "normal") {
       throw Error(constants.ERROR.INVALID_ACCOUNT)
     }
-    const isMatchPassword = await bcrypt.compare(password, user.password)
+    const isMatchPassword = await bcrypt.compare(password, user.password!!)
     if (!isMatchPassword) {
       throw Error(constants.ERROR.INVALID_ACCOUNT)
     }
@@ -154,6 +152,65 @@ export const login = async (
   }
 }
 
+export const loginByGoogle = (
+  req: Request,
+  res: Response,
+) => {
+  const url = generateGGAuthURL()
+  res.redirect(url)
+}
+
+export const loginByGoogleCallback = async (
+  req: Request,
+  res: Response,
+  next: NextFunction) => {
+    try {
+      const { code } = req.query
+      const { email, name, picture } = await verifyGoogle(code as string)
+      let user = await prisma.users.findFirst({
+        where: { email }
+      })
+      if(!user) {
+        const studentRole = await prisma.roles.findFirst({
+          where: { role_name: 'student' },
+        })
+    
+        if (!studentRole) {
+          throw Error(constants.ERROR.STUDENT_ROLE_NOT_FOUND)
+        }
+        user = await prisma.users.create({
+          data: {
+            email,
+            username: name,
+            fullname: name,
+            avatar: picture,
+            type: 'GG',
+            userRoles: {
+              create: [
+                {
+                  roles: {
+                    connect: { role_id: studentRole.role_id },
+                  },
+                },
+              ],
+            }
+          }
+        })
+      }
+      
+      const access_token = generateToken(user as IUser, {
+        expiresIn: constants.JWT.JWT,
+      })
+      const refresh_token = generateToken(user, {
+        expiresIn: constants.JWT.JWT_REFRESH,
+      })
+      return SuccessResponse(res, { access_token, refresh_token, user })
+      
+    } catch (error) {
+      next(error)
+    }
+}
+
 export const generateNewToken = async (
   req: Request,
   res: Response,
@@ -162,13 +219,13 @@ export const generateNewToken = async (
   try {
     const { refresh_token } = req.body
 
-    const [prefixToken, token] = (refresh_token as string).split(" ")
+    const [prefixToken, token] = (refresh_token as string).split(' ')
 
-    if(prefixToken.toLowerCase() != "bearer") {
+    if (prefixToken.toLowerCase() != 'bearer') {
       throw Error(constants.ERROR.INVALID_TOKEN_FORMAT)
     }
 
-    const decoded = await verifyToken(token) as IUser
+    const decoded = (await verifyToken(token)) as IUser
     const user = await prisma.users.findFirst({
       where: {
         email: decoded.email,
@@ -208,10 +265,6 @@ export const resetPassword = (
   res.send('Reset password')
 }
 
-export const logout = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const logout = (req: Request, res: Response, next: NextFunction) => {
   res.send('logout')
 }
