@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { NextFunction, Request, Response } from 'express'
 import { SuccessResponse } from '../helpers/responseHelper'
-import moment, { months } from 'moment'
+import moment from 'moment'
 import constants from '../common/constants'
 import { IUser } from '../models/IUser'
 import { ICourse } from '../models/ICourse'
@@ -95,3 +95,35 @@ export const updateCourse = async (
     next(error)
   }
 }
+
+export const getCourses = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const courses = await prisma.courses.findMany()
+    return SuccessResponse(res, courses)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const deleteCourse = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { course_id } = req.body
+    const course = await prisma.courses.delete({
+      where: {
+        course_id
+      }
+    })
+    return SuccessResponse(res, {message: 'Delete successfully', course})
+  } catch (error) {
+    next(error)
+  }
+}
+

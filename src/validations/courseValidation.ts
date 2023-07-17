@@ -21,3 +21,7 @@ export const updateCourseSchema = Joi.object({
     description: Joi.string().optional(),
     video_intro: Joi.string().optional()
 })
+
+export const deleteCourseSchema = Joi.object({
+    course_id: Joi.number().required(),
+})
