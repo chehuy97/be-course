@@ -27,8 +27,8 @@ prisma
 
 const port: string | number = process.env.PORT || 3000
 
-const server = app.listen(port, () => {
+app.listen(port, () => {
   console.log(`Listening on port ${port}`)
 })
 
-module.exports = server
+export default app

@@ -14,6 +14,7 @@ export const error = (
   switch (err.message) {
     case constants.ERROR.EXPIRED_TOKEN:
     case constants.ERROR.INVALID_TOKEN:
+    case constants.ERROR.INVALID_ACCOUNT:
     case constants.ERROR.NO_TOKEN:
       return Unauthorized(res, {
         errorMessage: err.message,

@@ -7,6 +7,7 @@ import constants from '../common/constants'
 import bcrypt from 'bcrypt'
 import { IUser } from '../models/IUser'
 import { generateGGAuthURL, verifyGoogle } from '../helpers/googleHelper'
+import { authRepository } from '../repositories'
 
 const prisma = new PrismaClient()
 
@@ -67,18 +68,14 @@ export const register = async (
       username,
       password,
     } = req.body
-    const studentRole = await prisma.roles.findFirst({
-      where: { role_name: 'student' },
-    })
-
+    const studentRole = await authRepository.findRole('student')
+  
     if (!studentRole) {
       throw Error(constants.ERROR.STUDENT_ROLE_NOT_FOUND)
     }
 
-    const existedStudent = await prisma.users.findFirst({
-      where: {
-        OR: [{ username }, { email }],
-      },
+    const existedStudent = await authRepository.findUser({
+      OR: [{ username }, { email }],
     })
 
     if (existedStudent) {
@@ -87,35 +84,26 @@ export const register = async (
 
     const excryptPassword = await encryptPassword(password)
 
-    const user = await prisma.users.create({
-      data: {
-        email,
-        fullname,
-        gender,
-        dateOfBirth,
-        avatar,
-        phone,
-        username,
-        password: excryptPassword,
-        userRoles: {
-          create: [
-            {
-              roles: {
-                connect: { role_id: studentRole.role_id },
-              },
+    const user = await authRepository.createUser({
+      email,
+      fullname,
+      gender,
+      dateOfBirth,
+      avatar,
+      phone,
+      username,
+      password: excryptPassword,
+      userRoles: {
+        create: [
+          {
+            roles: {
+              connect: { role_id: studentRole.role_id },
             },
-          ],
-        },
-      },
-      include: {
-        userRoles: {
-          include: {
-            roles: true,
           },
-        },
+        ],
       },
     })
-    return SuccessResponse(res, user)
+    return SuccessResponse(res, user, 201)
   } catch (err) {
     next(err)
   }
@@ -128,12 +116,8 @@ export const login = async (
 ) => {
   try {
     const { email, password } = req.body
-    const user = await prisma.users.findFirst({
-      where: {
-        email,
-      },
-    })
-    if (!user || user.type != "normal") {
+    const user = await authRepository.findUser({ email })
+    if (!user || user.type != 'normal') {
       throw Error(constants.ERROR.INVALID_ACCOUNT)
     }
     const isMatchPassword = await bcrypt.compare(password, user.password!!)
@@ -152,10 +136,7 @@ export const login = async (
   }
 }
 
-export const loginByGoogle = (
-  req: Request,
-  res: Response,
-) => {
+export const loginByGoogle = (req: Request, res: Response) => {
   const url = generateGGAuthURL()
   res.redirect(url)
 }
@@ -163,52 +144,52 @@ export const loginByGoogle = (
 export const loginByGoogleCallback = async (
   req: Request,
   res: Response,
-  next: NextFunction) => {
-    try {
-      const { code } = req.query
-      const { email, name, picture } = await verifyGoogle(code as string)
-      let user = await prisma.users.findFirst({
-        where: { email }
+  next: NextFunction
+) => {
+  try {
+    const { code } = req.query
+    const { email, name, picture } = await verifyGoogle(code as string)
+    let user = await prisma.users.findFirst({
+      where: { email },
+    })
+    if (!user) {
+      const studentRole = await prisma.roles.findFirst({
+        where: { role_name: 'student' },
       })
-      if(!user) {
-        const studentRole = await prisma.roles.findFirst({
-          where: { role_name: 'student' },
-        })
-    
-        if (!studentRole) {
-          throw Error(constants.ERROR.STUDENT_ROLE_NOT_FOUND)
-        }
-        user = await prisma.users.create({
-          data: {
-            email,
-            username: name,
-            fullname: name,
-            avatar: picture,
-            type: 'GG',
-            userRoles: {
-              create: [
-                {
-                  roles: {
-                    connect: { role_id: studentRole.role_id },
-                  },
-                },
-              ],
-            }
-          }
-        })
+
+      if (!studentRole) {
+        throw Error(constants.ERROR.STUDENT_ROLE_NOT_FOUND)
       }
-      
-      const access_token = generateToken(user as IUser, {
-        expiresIn: constants.JWT.JWT,
+      user = await prisma.users.create({
+        data: {
+          email,
+          username: name,
+          fullname: name,
+          avatar: picture,
+          type: 'GG',
+          userRoles: {
+            create: [
+              {
+                roles: {
+                  connect: { role_id: studentRole.role_id },
+                },
+              },
+            ],
+          },
+        },
       })
-      const refresh_token = generateToken(user, {
-        expiresIn: constants.JWT.JWT_REFRESH,
-      })
-      return SuccessResponse(res, { access_token, refresh_token, user })
-      
-    } catch (error) {
-      next(error)
     }
+
+    const access_token = generateToken(user as IUser, {
+      expiresIn: constants.JWT.JWT,
+    })
+    const refresh_token = generateToken(user, {
+      expiresIn: constants.JWT.JWT_REFRESH,
+    })
+    return SuccessResponse(res, { access_token, refresh_token, user })
+  } catch (error) {
+    next(error)
+  }
 }
 
 export const generateNewToken = async (

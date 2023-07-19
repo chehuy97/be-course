@@ -16,7 +16,7 @@ const response = (
 }
 
 export const SuccessResponse = (res: Response, data: any, statusCode = 200) => {
-  res.status(200).json(response(statusCode, null, null, data))
+  res.status(statusCode).json(response(statusCode, null, null, data))
 }
 
 export const BadRequest = (
