@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { NextFunction, Request, Response } from 'express'
 import { BadRequest, SuccessResponse } from '../helpers/responseHelper'
-import { generateToken, verifyToken } from '../helpers/jwtHelper'
+import { TokenType, generateToken, verifyToken } from '../helpers/jwtHelper'
 import { encryptPassword } from '../helpers/encryptHelper'
 import constants from '../common/constants'
 import bcrypt from 'bcrypt'
@@ -129,7 +129,7 @@ export const login = async (
     })
     const refresh_token = generateToken(user, {
       expiresIn: constants.JWT.JWT_REFRESH,
-    })
+    }, TokenType.REFRESH)
     return SuccessResponse(res, { access_token, refresh_token, user })
   } catch (err) {
     next(err)
@@ -185,7 +185,7 @@ export const loginByGoogleCallback = async (
     })
     const refresh_token = generateToken(user, {
       expiresIn: constants.JWT.JWT_REFRESH,
-    })
+    }, TokenType.REFRESH)
     return SuccessResponse(res, { access_token, refresh_token, user })
   } catch (error) {
     next(error)
@@ -206,7 +206,7 @@ export const generateNewToken = async (
       throw Error(constants.ERROR.INVALID_TOKEN_FORMAT)
     }
 
-    const decoded = (await verifyToken(token)) as IUser
+    const decoded = (await verifyToken(token, TokenType.REFRESH)) as IUser
     const user = await prisma.users.findFirst({
       where: {
         email: decoded.email,
@@ -220,7 +220,7 @@ export const generateNewToken = async (
     })
     const new_refresh_token = generateToken(user as IUser, {
       expiresIn: constants.JWT.JWT_REFRESH,
-    })
+    }, TokenType.REFRESH)
     return SuccessResponse(res, {
       access_token,
       refresh_token: new_refresh_token,
